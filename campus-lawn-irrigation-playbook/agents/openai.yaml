@@ -1,0 +1,7 @@
+interface:
+  display_name: "校園草皮噴灌管理"
+  short_description: "校園草皮季節排程與情境調整 skill"
+  default_prompt: "Use $campus-lawn-irrigation-playbook to answer campus lawn irrigation questions by season, weekday, and situation."
+
+policy:
+  allow_implicit_invocation: true

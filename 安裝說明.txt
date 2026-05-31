@@ -1,0 +1,34 @@
+OpenClaw 草皮噴灌 skill 安裝說明
+
+交付內容：
+1. campus-lawn-irrigation-playbook
+   這是要放進 OpenClaw 的 skill 資料夾
+2. OpenClaw 啟用指令.txt
+   這是安裝後可以直接貼給 OpenClaw 的通用初始化指令
+
+安裝方式：
+1. 在另一台電腦找到 OpenClaw 的 skills 目錄
+2. 將 campus-lawn-irrigation-playbook 整個資料夾複製到 skills 目錄內
+3. 確認資料夾名稱保持為：
+   campus-lawn-irrigation-playbook
+4. 安裝完成後，把「OpenClaw 啟用指令.txt」內的文字貼給 OpenClaw
+
+這個 skill 已整合的內容：
+1. 夏季、春季/秋季、冬季的固定噴灌時間
+2. 日常情境：
+   中午班級曬教具、雨天、溜冰課
+3. 活動情境：
+   母親節、校慶、戶外節日活動
+4. 工程情境：
+   割草、壓草皮、大型工程車進場、鉅樹工程
+5. 草皮過濕時的調整：
+   減少時長、減少開關次數、延後恢復
+
+目前採用的規則假設：
+- 冬季預設沒有凌晨 02:00 噴灌
+- 若只有局部草皮受影響，其餘未受影響區域可維持原排程
+
+公開安全提醒：
+- 這份 repo 不應包含校名、地址、學生個資、設備帳密、控制器 token、
+  現場照片、匯出日誌或可直接控制設備的 API 資訊。
+- 若要搬移到其他電腦，請從目前 source tree 重新打包，不要提交 zip。

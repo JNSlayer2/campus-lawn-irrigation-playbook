@@ -1,0 +1,299 @@
+version: 1
+snapshot_date: 2026-04-08
+timezone: Asia/Taipei
+domain: campus_lawn_irrigation
+
+assumptions:
+  - "Winter has no default 02:00 slot because the source schedule did not provide one."
+  - "If only part of the lawn is occupied by activity or engineering work, unaffected zones may stay on the seasonal base schedule."
+
+decision_priority:
+  - engineering_lockout
+  - heavy_rain_or_saturated_turf
+  - scheduled_activity_or_class_use
+  - daily_exception
+  - seasonal_base_schedule
+
+response_contract:
+  default_sections:
+    - 判斷結果
+    - 原定排程
+    - 調整建議
+    - 原因
+    - 恢復條件
+  quick_sections:
+    - 結論
+    - 調整
+    - 提醒
+
+season_schedules:
+  summer:
+    label: 夏季
+    day_groups:
+      monday:
+        weekday_labels: [Monday, 禮拜一]
+        slots:
+          morning: null
+          noon: null
+          afternoon_1520: null
+          afternoon_1720:
+            start: "17:20"
+            end: "17:40"
+            duration_minutes: 20
+          overnight_0200:
+            start: "02:00"
+            end: "02:10"
+            duration_minutes: 10
+      tuesday_to_friday:
+        weekday_labels: [Tuesday, Wednesday, Thursday, Friday, 禮拜二到禮拜五]
+        slots:
+          morning:
+            start: "07:00"
+            end: "07:20"
+            duration_minutes: 20
+          noon:
+            start: "12:00"
+            end: "12:20"
+            duration_minutes: 20
+          afternoon_1520: null
+          afternoon_1720:
+            start: "17:20"
+            end: "17:40"
+            duration_minutes: 20
+          overnight_0200:
+            start: "02:00"
+            end: "02:10"
+            duration_minutes: 10
+      saturday:
+        weekday_labels: [Saturday, 禮拜六]
+        slots:
+          morning:
+            start: "07:00"
+            end: "07:20"
+            duration_minutes: 20
+          noon:
+            start: "12:00"
+            end: "12:20"
+            duration_minutes: 20
+          afternoon_1520:
+            start: "15:20"
+            end: "15:40"
+            duration_minutes: 20
+          afternoon_1720:
+            start: "17:20"
+            end: "17:40"
+            duration_minutes: 20
+          overnight_0200:
+            start: "02:00"
+            end: "02:10"
+            duration_minutes: 10
+      sunday:
+        weekday_labels: [Sunday, 禮拜天]
+        slots:
+          morning:
+            start: "07:00"
+            end: "07:20"
+            duration_minutes: 20
+          noon:
+            start: "12:00"
+            end: "12:20"
+            duration_minutes: 20
+          afternoon_1520:
+            start: "15:20"
+            end: "15:40"
+            duration_minutes: 20
+          afternoon_1720: null
+          overnight_0200: null
+  spring_autumn:
+    label: 春季 / 秋季
+    day_groups:
+      monday:
+        weekday_labels: [Monday, 禮拜一]
+        slots:
+          morning: null
+          noon:
+            start: "12:00"
+            end: "12:10"
+            duration_minutes: 10
+          afternoon_1720:
+            start: "17:20"
+            end: "17:40"
+            duration_minutes: 20
+          overnight_0200:
+            start: "02:00"
+            end: "02:10"
+            duration_minutes: 10
+      tuesday_to_saturday:
+        weekday_labels: [Tuesday, Wednesday, Thursday, Friday, Saturday, 禮拜二到禮拜六]
+        slots:
+          morning:
+            start: "07:00"
+            end: "07:10"
+            duration_minutes: 10
+          noon:
+            start: "12:00"
+            end: "12:10"
+            duration_minutes: 10
+          afternoon_1720:
+            start: "17:20"
+            end: "17:40"
+            duration_minutes: 20
+          overnight_0200:
+            start: "02:00"
+            end: "02:10"
+            duration_minutes: 10
+      sunday:
+        weekday_labels: [Sunday, 禮拜天]
+        slots:
+          morning:
+            start: "07:00"
+            end: "07:10"
+            duration_minutes: 10
+          noon:
+            start: "12:00"
+            end: "12:10"
+            duration_minutes: 10
+          afternoon_1720: null
+          overnight_0200: null
+  winter:
+    label: 冬季
+    day_groups:
+      monday:
+        weekday_labels: [Monday, 禮拜一]
+        slots:
+          morning: null
+          noon:
+            start: "12:00"
+            end: "12:15"
+            duration_minutes: 15
+          afternoon_1720:
+            start: "17:20"
+            end: "17:30"
+            duration_minutes: 10
+          overnight_0200: null
+      tuesday_to_saturday:
+        weekday_labels: [Tuesday, Wednesday, Thursday, Friday, Saturday, 禮拜二到禮拜六]
+        slots:
+          morning:
+            start: "07:00"
+            end: "07:15"
+            duration_minutes: 15
+          noon:
+            start: "12:00"
+            end: "12:15"
+            duration_minutes: 15
+          afternoon_1720:
+            start: "17:20"
+            end: "17:30"
+            duration_minutes: 10
+          overnight_0200: null
+      sunday:
+        weekday_labels: [Sunday, 禮拜天]
+        slots:
+          morning:
+            start: "07:00"
+            end: "07:15"
+            duration_minutes: 15
+          noon:
+            start: "12:00"
+            end: "12:15"
+            duration_minutes: 15
+          afternoon_1720: null
+          overnight_0200: null
+
+scenario_rules:
+  daily:
+    noon_class_equipment_drying:
+      label: 中午班級曬教具
+      aliases: [中午班級曬教具, 教具曬乾, 中午曬教具]
+      priority: daily_exception
+      affected_slots: [noon]
+      actions:
+        - cancel_affected_noon_slot
+        - move_to_next_safe_regular_slot_if_water_is_still_needed
+        - do_not_restart_before_people_and_equipment_clear
+      resume_condition: 班級、人員、教具均已撤離，且不會再進入同一時段使用。
+    rain:
+      label: 雨天
+      aliases: [雨天, 下雨, 小雨, 大雨, 連續下雨]
+      priority: heavy_rain_or_saturated_turf
+      actions:
+        light_rain:
+          - cancel_current_or_next_irrigation_slot
+          - keep_other_unaffected_slots_under_observation
+        heavy_or_continuous_rain:
+          - suspend_irrigation_until_surface_is_not_waterlogged
+          - resume_with_50_percent_duration_for_1_to_2_slots
+      resume_condition: 草皮不積水、不黏腳、踩踏後無明顯回滲。
+    skating_class:
+      label: 溜冰課
+      aliases: [溜冰課, 溜冰教學, 溜冰活動]
+      priority: scheduled_activity_or_class_use
+      actions:
+        - suspend_overlapping_slots
+        - avoid_wetting_area_within_2_hours_before_class
+        - keep_unaffected_zones_on_regular_schedule
+      resume_condition: 課程已結束，場地不再有學生使用需求。
+  activity:
+    campus_outdoor_event:
+      label: 母親節 / 校慶 / 戶外節日活動
+      aliases: [母親節, 校慶, 戶外節日活動, 戶外活動, 慶典活動]
+      priority: scheduled_activity_or_class_use
+      actions:
+        - suspend_affected_zones_when_setup_begins
+        - suspend_all_affected_zones_on_event_day
+        - if_setup_starts_previous_day_cancel_previous_evening_or_overnight_slot
+        - inspect_compaction_and_wetness_before_resuming
+      resume_condition: 舞台、帳棚、人流動線與器材撤場完成，草皮可正常通行。
+  engineering:
+    mowing:
+      label: 割草
+      aliases: [割草, 修草]
+      priority: engineering_lockout
+      actions:
+        - suspend_irrigation_during_mowing
+        - skip_the_nearest_slot_before_mowing_if_possible
+        - resume_after_cleanup
+      resume_condition: 割草作業與清場完成，草屑已處理。
+    turf_rolling:
+      label: 壓草皮
+      aliases: [壓草皮, 壓實草皮]
+      priority: engineering_lockout
+      actions:
+        - avoid_long_continuous_irrigation
+        - prefer_shorter_duration_not_more_restarts
+        - resume_with_50_percent_duration_if_surface_looks_dry_after_work
+      resume_condition: 壓實完成，表面不泥濘且無明顯陷落。
+    heavy_vehicle_or_large_tree_work:
+      label: 大型工程車進場 / 鉅樹工程
+      aliases: [大型工程車進場, 工程車進場, 鉅樹, 鉅樹工程, 樹木工程]
+      priority: engineering_lockout
+      actions:
+        - full_shutdown_for_affected_zones
+        - do_not_resume_until_people_vehicles_and_materials_leave
+        - keep_other_zones_on_regular_schedule_only_if_isolated_and_safe
+      resume_condition: 工程退場、封鎖解除、地表安全可通行。
+  saturated_turf:
+    wet_turf_adjustment:
+      label: 草皮過濕
+      aliases: [草皮太濕, 草皮過濕, 地面太濕, 積水, 黏腳]
+      priority: heavy_rain_or_saturated_turf
+      indicators:
+        - 有積水
+        - 踩踏後表面發亮或回滲
+        - 土壤黏腳
+        - 足印不易恢復
+      actions:
+        - cancel_next_slot_or_cut_next_duration_to_50_percent
+        - reduce_same_day_restart_count_to_0_or_1
+        - keep_paused_if_waterlogging_persists
+        - restore_gradually_over_1_to_3_slots
+      resume_condition: 表面回到可通行狀態，踩踏無水光、無明顯回滲。
+
+toggle_guidance:
+  normal_condition:
+    suggested_restart_count_per_slot: 1
+    note: 預設使用單次連續灑水，不主張無必要的反覆開關。
+  saturated_or_rainy_condition:
+    suggested_restart_count_per_day: "0-1"
+    note: 草皮過濕或下雨時，優先減次數與減時長。
